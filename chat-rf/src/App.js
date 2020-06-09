@@ -1,18 +1,26 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
-import ChatRoom from './components/ChatRoom';
+import AppBar from 'material-ui/AppBar';
+import Toolbar from 'material-ui/Toolbar';
+import Typography from 'material-ui/Typography';
 
-class App extends Component{
+import ChatRoom from './component/ChatRoom';
 
-    render(){
-        return(
-            <div>
-                <h1>ChatRoom</h1>
-                <ChatRoom/>
-            </div>
-        ) 
-    }
-
+class App extends Component {
+  render() {
+    return(
+      <div className="App">
+        <AppBar position="static" color="default">
+          <Toolbar>
+            <Typography type="title" color="inherit">
+              Chat App
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <ChatRoom/>
+      </div>
+    )
+  }
 }
 
 export default App;

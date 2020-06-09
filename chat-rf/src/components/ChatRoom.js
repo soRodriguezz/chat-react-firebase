@@ -1,72 +1,81 @@
 import React, { Component } from 'react';
 
+import TextField from 'material-ui/TextField';
+import Button from 'material-ui/Button';
+
 class ChatRoom extends Component {
 
-    constructor() {
-        super();
-        this.state = {
-            message: '',
-            messages: [
-               // { id: 0, text: '1' },
-                //{ id: 1, text: '12' },
-                //{ id: 2, text: '123' }
-            ]
-        }
+  constructor() {
+    super();
+    this.state = {
+      message: '',
+      messages: [
+        // {id: 0, text: 'asdasd'},
+        // {id: 1, text: 'asdasd'},
+        // {id: 2, text: 'asdasd'}
+      ]
     }
 
-    updateMessage(e){
-        this.setState({message: e.target.value});
-        console.log(this.state.message);
-    }
+  }
 
-    componentDidMount(){
-        window.firebase.database().ref('/messages').on('value', snapshot => {
-            const currentessages = snapshot.val();
-            if(currentessages != null){
-                this.state({
-                    messages: currentessages
-                })
-            }
+  componentDidMount() {
+    firebase.database().ref('messages/').on('value', snapashot => {
+      const currentMessages = snapashot.val();
+      if (currentMessages != null) {
+        this.setState({
+          messages: currentMessages
         });
-    }
+      }
+    });
+  }
 
-    handleSubmit(e) {
-        e.preventDefault();
-        const list = this.state.messages;
-        const newMessage = {
-            id: this.state.messages.length,
-            text: this.state.message
-        };
+  updateMessage(e) {
+    this.setState({
+      message: e.target.value
+    })
+  }
 
-        list.push(newMessage);
-        this.setState({ messages: list });
-        this.setState({ message: '' });
-    }
+  handleSubmit(e) {
+    e.preventDefault();
+    let list = this.state.messages;
+    const newMessage = {
+      id: this.state.messages.length,
+      text: this.state.message
+    };
+    // list.push(newMessage);
+    // this.setState({
+    //   messages: list
+    // });
+    firebase.database().ref(`messages/${newMessage.id}`)
+      .set(newMessage);
+    this.setState({
+      message: ''
+    });
+  }
 
-    render() {
+  render() {
+    const { messages } = this.state;
+    const messagesList = messages.map(message => {
+      return <li key={message.id}>{message.text}</li>
+    });
 
-        const { messages } = this.state;
-        const messageList = messages.map(message => {
-            return <li key={message.id}>{message.text}</li>
-        })
-
-        return (
-            <div>
-                <ul>
-                    {messageList}
-                </ul>
-
-                <form onSubmit={this.handleSubmit.bind(this)}>
-                    <input type="text" value={this.state.message} onChange={ this.updateMessage.bind(this) }/>
-
-                    <button>
-                        send
-                    </button>
-                </form>
-            </div>
-        )
-    }
-
+    return(
+      <form onSubmit={this.handleSubmit.bind(this)}>
+        <ol>
+          {messagesList}
+        </ol>
+        <TextField
+          onChange={this.updateMessage.bind(this)}
+          value={this.state.message}
+          placeholder="Message"
+          type="text" />
+        <Button
+          onClick={this.handleSubmit.bind(this)}
+          raised color="primary">
+          Send
+        </Button>
+      </form>
+    )
+  }
 }
-
 export default ChatRoom;
